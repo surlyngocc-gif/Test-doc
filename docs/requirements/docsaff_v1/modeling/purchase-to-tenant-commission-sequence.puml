@@ -1,0 +1,136 @@
+@startuml
+title Luong mua hang den khi ghi nhan commission cho Tenant - MVP1
+
+autonumber
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 20
+skinparam BoxPadding 12
+
+actor "End User" as EU
+
+box "Tenant touchpoint" #EEF7F2
+participant "Landing Page\nWhite-label" as LP
+end box
+
+box "Affiliate Platform" #EEF1FF
+participant "Click Tracking\nService" as CLICK
+participant "Order API" as ORDER
+participant "Click Matching\nService" as CLICKMATCH
+participant "Commission\nService" as COMM
+participant "Tenant Revenue\nShare Service" as SHARE
+database "Affiliate DB" as DB
+participant "Reporting View\nCMS/Tenant Portal" as REPORT
+end box
+
+box "Brand/Merchant" #FFF3EA
+participant "Brand Website/App" as BRANDWEB
+participant "Brand Order\nPostback/Webhook" as BRANDAPI
+end box
+
+== Khach hang vao marketplace va click sang Brand ==
+
+EU -> LP: Truy cap landing page cua Tenant
+LP -> DB: Lay Brand/Offer active va visible theo tenant_id
+DB --> LP: Tra catalog, banner, top brand, earn display text
+LP --> EU: Hien thi Brand/Offer va thong tin earn/cashback display
+
+EU -> LP: Click Brand/Offer/Banner
+LP -> CLICK: Tao click tracking\n(tenant_id, brand_id, offer_id?, user_ref/member_ref?, source)
+CLICK -> DB: Kiem tra Tenant/Brand/Offer active va visible
+
+alt Target hop le
+  CLICK -> DB: Luu click record
+  DB --> CLICK: click_id da duoc tao
+  CLICK --> LP: Tra redirect_url kem click_id/tracking params
+  LP --> EU: Redirect sang Brand
+  EU -> BRANDWEB: Mo trang Brand/Offer kem click_id
+else Target khong hop le
+  CLICK --> LP: Tu choi tao click
+  LP --> EU: Hien thi thong bao khong kha dung
+end
+
+== Khach hang mua hang tai Brand ==
+
+EU -> BRANDWEB: Chon san pham va dat hang
+BRANDWEB -> BRANDWEB: Xu ly checkout/payment cua Brand
+
+alt Dat hang thanh cong
+  BRANDWEB -> BRANDAPI: Ghi nhan don hang thanh cong\n(brand_order_id, amount, click_id)
+  BRANDAPI -> ORDER: Gui order success realtime\n(request_id, brand_id/code, click_id,\nbrand_order_id, amount, currency,\noffer_id?, brand_category_id/code?,\nuser_id?, member_ref?)
+else Khong hoan tat mua hang
+  BRANDWEB --> EU: Ket thuc luong, khong co order success
+end
+
+== Affiliate Platform ghi nhan order/transaction ==
+
+ORDER -> ORDER: Validate auth, schema, idempotency
+
+alt Request khong hop le hoac duplicate
+  ORDER -> DB: Ghi reject/exception neu can
+  ORDER --> BRANDAPI: Tra loi loi hoac idempotent response
+else Request hop le
+  ORDER -> CLICKMATCH: Match click_id voi click record
+  CLICKMATCH -> DB: Tim click record va context Tenant/Brand/Offer
+
+  alt Click_id invalid
+    CLICKMATCH --> ORDER: Khong match duoc click hop le
+    ORDER -> DB: Ghi exception click_id_invalid
+    ORDER --> BRANDAPI: Tra ket qua ghi nhan exception
+  else Click_id match pass
+    CLICKMATCH --> ORDER: Tra tenant_id, brand_id, offer_id?, source click
+    ORDER -> DB: Kiem tra visibility tai thoi diem click/order
+
+    alt Visibility fail
+      ORDER -> DB: Ghi exception visibility_fail
+      ORDER --> BRANDAPI: Tra ket qua ghi nhan exception
+    else Visibility pass
+      ORDER -> COMM: Yeu cau tinh commission Brand tra Affiliate\n(order_amount, brand_id, offer_id?, brand_category_id/code?)
+
+      alt Co offer_id tu URL link Offer
+        COMM -> DB: Lay Offer commission rule
+        DB --> COMM: commission_type, commission_value
+      else Khong co offer_id, tinh theo category
+        alt Brand co gui category ID/code
+          COMM -> DB: Mapping brand_category_id/code sang affiliate_category_id
+          DB --> COMM: affiliate_category_id
+        else Brand khong gui category ID/code
+          COMM -> DB: Lay category mac dinh cua Brand
+          DB --> COMM: affiliate_category_id mac dinh
+        end
+        COMM -> DB: Lay Brand Category Commission rule
+        DB --> COMM: commission_type, commission_value
+      end
+
+      alt Thieu mapping/default/rule commission
+        COMM --> ORDER: Khong tinh duoc gross_commission
+        ORDER -> DB: Ghi exception mapping_missing/default_category_missing/commission_rule_missing
+        ORDER --> BRANDAPI: Tra ket qua ghi nhan exception
+      else Tinh duoc commission
+        COMM --> ORDER: gross_commission_amount
+        ORDER -> SHARE: Tinh phan Affiliate chia cho Tenant\n(tenant_id, brand_id, offer_id?, category_id?, gross_commission_amount)
+        SHARE -> DB: Resolve Tenant Revenue Share Rule\nuu tien Offer -> Category -> Brand
+        DB --> SHARE: tenant_share_rate
+        SHARE --> ORDER: tenant_share_amount, affiliate_keep_amount
+
+        ORDER -> DB: Tao transaction/order\norder_status=Pending\nluu commission/share tam tinh neu tinh duoc rule
+        DB --> ORDER: transaction_id/order_id
+        ORDER --> BRANDAPI: Tra response success
+      end
+    end
+  end
+end
+
+== Hien thi bao cao/tra cuu ==
+
+REPORT -> DB: Doc transaction va commission theo quyen
+DB --> REPORT: Transaction, gross commission, tenant share, affiliate keep
+REPORT --> EU: Khong hien thi trong MVP1\n(End User cashback history pending)
+
+note over REPORT
+Admin CMS xem toan he thong.
+Tenant Portal chi xem du lieu trong tenant_id cua minh.
+MVP1 chua tinh/call API cong diem cho End User.
+end note
+
+@enduml

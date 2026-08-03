@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1640" viewBox="0 0 1800 1640">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"/>
+    </marker>
+    <style>
+      .title { font: 700 30px Arial, sans-serif; fill: #101828; }
+      .subtitle { font: 14px Arial, sans-serif; fill: #475467; }
+      .lane-title { font: 700 15px Arial, sans-serif; fill: #344054; text-anchor: middle; }
+      .box-title { font: 700 14px Arial, sans-serif; fill: #101828; }
+      .box-text { font: 12.5px Arial, sans-serif; fill: #475467; }
+      .note-title { font: 700 15px Arial, sans-serif; fill: #344054; }
+      .note-text { font: 13px Arial, sans-serif; fill: #475467; }
+      .lane { fill: #f8fafc; stroke: #d0d5dd; stroke-width: 1; }
+      .lane-head { fill: #eef4ff; stroke: #84adff; stroke-width: 1; rx: 8; }
+      .eu-head { fill: #ecfdf3; stroke: #12b76a; stroke-width: 1; rx: 8; }
+      .brand-head { fill: #fff7ed; stroke: #fdba74; stroke-width: 1; rx: 8; }
+      .step { fill: #ffffff; stroke: #98a2b3; stroke-width: 1.3; rx: 10; }
+      .step-eu { fill: #f0fdf4; stroke: #12b76a; stroke-width: 1.3; rx: 10; }
+      .step-brand { fill: #fff7ed; stroke: #fb923c; stroke-width: 1.3; rx: 10; }
+      .step-platform { fill: #eef4ff; stroke: #84adff; stroke-width: 1.3; rx: 10; }
+      .step-db { fill: #f9fafb; stroke: #667085; stroke-width: 1.3; rx: 10; }
+      .decision { fill: #fffbeb; stroke: #f59e0b; stroke-width: 1.5; }
+      .success { fill: #ecfdf3; stroke: #12b76a; stroke-width: 1.5; rx: 10; }
+      .exception { fill: #fff1f3; stroke: #f63d68; stroke-width: 1.5; rx: 10; }
+      .arrow { stroke: #344054; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+      .arrow-dashed { stroke: #667085; stroke-width: 1.5; fill: none; stroke-dasharray: 7 5; marker-end: url(#arrow); }
+      .label { font: 700 12px Arial, sans-serif; fill: #344054; }
+      .num { fill: #344054; font: 700 12px Arial, sans-serif; }
+      .circle { fill: #ffffff; stroke: #667085; stroke-width: 1.2; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1640" fill="#ffffff"/>
+
+  <text x="900" y="42" class="title" text-anchor="middle">Luồng mua hàng đến khi ghi nhận commission cho Tenant</text>
+  <text x="900" y="68" class="subtitle" text-anchor="middle">MVP1: tracking click, ghi nhận order, tính commission Brand trả Affiliate và phần Affiliate chia Tenant. Chưa cộng điểm/cashback cho End User.</text>
+
+  <!-- Lanes -->
+  <rect x="40" y="100" width="270" height="1530" class="lane"/>
+  <rect x="315" y="100" width="270" height="1530" class="lane"/>
+  <rect x="590" y="100" width="270" height="1530" class="lane"/>
+  <rect x="865" y="100" width="270" height="1530" class="lane"/>
+  <rect x="1140" y="100" width="270" height="1530" class="lane"/>
+  <rect x="1415" y="100" width="345" height="1530" class="lane"/>
+
+  <rect x="55" y="118" width="240" height="44" class="eu-head"/>
+  <text x="175" y="146" class="lane-title">End User</text>
+  <rect x="330" y="118" width="240" height="44" class="lane-head"/>
+  <text x="450" y="146" class="lane-title">Landing Page / Click Tracking</text>
+  <rect x="605" y="118" width="240" height="44" class="brand-head"/>
+  <text x="725" y="146" class="lane-title">Brand Website / Postback</text>
+  <rect x="880" y="118" width="240" height="44" class="lane-head"/>
+  <text x="1000" y="146" class="lane-title">Order API / Click Match</text>
+  <rect x="1155" y="118" width="240" height="44" class="lane-head"/>
+  <text x="1275" y="146" class="lane-title">Commission / Tenant Share</text>
+  <rect x="1430" y="118" width="315" height="44" class="lane-head"/>
+  <text x="1587" y="146" class="lane-title">Affiliate DB / Reporting</text>
+
+  <!-- Helpers: boxes -->
+  <g id="flow">
+    <!-- Step 1 -->
+    <rect x="70" y="205" width="210" height="74" class="step-eu"/>
+    <text x="88" y="230" class="box-title">1. Truy cập landing page</text>
+    <text x="88" y="252" class="box-text">End User mở marketplace</text>
+    <text x="88" y="270" class="box-text">white-label của Tenant</text>
+
+    <path d="M280 242 H360" class="arrow"/>
+
+    <rect x="360" y="205" width="190" height="74" class="step-platform"/>
+    <text x="378" y="230" class="box-title">2. Load catalog</text>
+    <text x="378" y="252" class="box-text">Lấy Brand/Offer active,</text>
+    <text x="378" y="270" class="box-text">assigned và visible</text>
+
+    <path d="M550 242 H1460" class="arrow"/>
+    <text x="910" y="232" class="label">query tenant_id, locale</text>
+
+    <rect x="1460" y="205" width="250" height="74" class="step-db"/>
+    <text x="1478" y="230" class="box-title">3. Trả dữ liệu hiển thị</text>
+    <text x="1478" y="252" class="box-text">Banner, Top Brands, category,</text>
+    <text x="1478" y="270" class="box-text">Offer, earn display text</text>
+
+    <path d="M1460 295 H550" class="arrow-dashed"/>
+    <path d="M360 295 H175 V280" class="arrow-dashed"/>
+    <text x="665" y="316" class="label">render landing page cho End User</text>
+
+    <!-- Step click -->
+    <rect x="70" y="360" width="210" height="74" class="step-eu"/>
+    <text x="88" y="385" class="box-title">4. Click Brand/Offer</text>
+    <text x="88" y="407" class="box-text">Click card, CTA hoặc banner</text>
+    <text x="88" y="425" class="box-text">để đi sang Brand</text>
+
+    <path d="M280 397 H360" class="arrow"/>
+
+    <rect x="360" y="360" width="190" height="88" class="step-platform"/>
+    <text x="378" y="385" class="box-title">5. Tạo click tracking</text>
+    <text x="378" y="407" class="box-text">tenant_id, brand_id,</text>
+    <text x="378" y="425" class="box-text">offer_id?, member_ref?,</text>
+    <text x="378" y="443" class="box-text">source_component</text>
+
+    <path d="M550 404 H1460" class="arrow"/>
+    <text x="910" y="394" class="label">kiểm tra active / assigned / visible</text>
+
+    <rect x="1460" y="360" width="250" height="88" class="step-db"/>
+    <text x="1478" y="385" class="box-title">6. Lưu click record</text>
+    <text x="1478" y="407" class="box-text">Sinh click_id</text>
+    <text x="1478" y="425" class="box-text">Lưu redirect URL</text>
+    <text x="1478" y="443" class="box-text">Không tính CPC billing</text>
+
+    <path d="M1460 470 H455 V525" class="arrow-dashed"/>
+    <text x="840" y="490" class="label">trả click_id / tracking params</text>
+
+    <rect x="360" y="525" width="190" height="74" class="step-platform"/>
+    <text x="378" y="550" class="box-title">7. Redirect sang Brand</text>
+    <text x="378" y="572" class="box-text">Gắn click_id/tracking</text>
+    <text x="378" y="590" class="box-text">parameter vào URL</text>
+
+    <path d="M550 562 H635" class="arrow"/>
+
+    <rect x="635" y="525" width="190" height="74" class="step-brand"/>
+    <text x="653" y="550" class="box-title">8. Mở trang Brand</text>
+    <text x="653" y="572" class="box-text">Brand nhận traffic</text>
+    <text x="653" y="590" class="box-text">kèm tracking params</text>
+
+    <!-- Purchase -->
+    <rect x="70" y="655" width="210" height="74" class="step-eu"/>
+    <text x="88" y="680" class="box-title">9. Đặt hàng tại Brand</text>
+    <text x="88" y="702" class="box-text">End User chọn sản phẩm,</text>
+    <text x="88" y="720" class="box-text">checkout/payment tại Brand</text>
+
+    <path d="M280 692 H635" class="arrow"/>
+
+    <rect x="635" y="655" width="190" height="74" class="step-brand"/>
+    <text x="653" y="680" class="box-title">10. Order success</text>
+    <text x="653" y="702" class="box-text">Brand ghi nhận đơn hàng</text>
+    <text x="653" y="720" class="box-text">thành công</text>
+
+    <path d="M725 729 V805" class="arrow"/>
+
+    <rect x="635" y="805" width="190" height="92" class="step-brand"/>
+    <text x="653" y="830" class="box-title">11. Gửi order success</text>
+    <text x="653" y="852" class="box-text">request_id, click_id,</text>
+    <text x="653" y="870" class="box-text">brand_order_id, amount,</text>
+    <text x="653" y="888" class="box-text">offer_id? hoặc category code</text>
+
+    <path d="M825 851 H910" class="arrow"/>
+
+    <rect x="910" y="805" width="190" height="92" class="step-platform"/>
+    <text x="928" y="830" class="box-title">12. Validate request</text>
+    <text x="928" y="852" class="box-text">Auth, schema, duplicate,</text>
+    <text x="928" y="870" class="box-text">idempotency, currency,</text>
+    <text x="928" y="888" class="box-text">payload required fields</text>
+
+    <polygon points="1005,945 1115,1005 1005,1065 895,1005" class="decision"/>
+    <text x="1005" y="994" class="box-title" text-anchor="middle">13. Click match</text>
+    <text x="1005" y="1013" class="box-text" text-anchor="middle">pass?</text>
+
+    <path d="M1005 897 V945" class="arrow"/>
+    <path d="M1115 1005 H1210" class="arrow"/>
+    <text x="1132" y="992" class="label">Có</text>
+    <path d="M895 1005 H760 V1198 H540" class="arrow-dashed"/>
+    <text x="810" y="990" class="label">Không</text>
+
+    <rect x="1210" y="965" width="170" height="80" class="step-platform"/>
+    <text x="1228" y="990" class="box-title">14. Visibility pass</text>
+    <text x="1228" y="1012" class="box-text">Kiểm tra Brand/Offer</text>
+    <text x="1228" y="1030" class="box-text">còn hợp lệ với Tenant</text>
+
+    <path d="M1295 1045 V1090" class="arrow"/>
+
+    <polygon points="1295,1090 1405,1150 1295,1210 1185,1150" class="decision"/>
+    <text x="1295" y="1138" class="box-title" text-anchor="middle">15. Có</text>
+    <text x="1295" y="1157" class="box-text" text-anchor="middle">offer_id?</text>
+
+    <path d="M1405 1150 H1460" class="arrow"/>
+    <text x="1418" y="1138" class="label">Có</text>
+
+    <rect x="1460" y="1104" width="250" height="86" class="step-db"/>
+    <text x="1478" y="1129" class="box-title">16A. Lấy Offer rule</text>
+    <text x="1478" y="1151" class="box-text">Commission theo Offer</text>
+    <text x="1478" y="1169" class="box-text">Không phụ thuộc category</text>
+
+    <path d="M1295 1210 V1268 H1460" class="arrow"/>
+    <text x="1310" y="1244" class="label">Không</text>
+
+    <rect x="1460" y="1228" width="250" height="104" class="step-db"/>
+    <text x="1478" y="1253" class="box-title">16B. Mapping category</text>
+    <text x="1478" y="1275" class="box-text">brand_category_id/code</text>
+    <text x="1478" y="1293" class="box-text">-> affiliate_category_id</text>
+    <text x="1478" y="1311" class="box-text">Lấy Category commission</text>
+
+    <rect x="1180" y="1350" width="220" height="82" class="step-platform"/>
+    <text x="1198" y="1375" class="box-title">17. Tính gross commission</text>
+    <text x="1198" y="1397" class="box-text">Brand trả Affiliate</text>
+    <text x="1198" y="1415" class="box-text">theo % hoặc VND</text>
+
+    <path d="M1460 1148 H1434 V1370 H1400" class="arrow-dashed"/>
+    <path d="M1460 1280 H1422 V1412 H1400" class="arrow-dashed"/>
+    <text x="1424" y="1342" class="label">commission rule</text>
+
+    <path d="M1290 1432 V1465" class="arrow"/>
+
+    <rect x="1180" y="1465" width="220" height="82" class="step-platform"/>
+    <text x="1198" y="1490" class="box-title">18. Tính Tenant Share</text>
+    <text x="1198" y="1512" class="box-text">Resolve rule:</text>
+    <text x="1198" y="1530" class="box-text">Offer -> Category -> Brand</text>
+
+    <path d="M1400 1506 H1460" class="arrow"/>
+
+    <rect x="1460" y="1465" width="250" height="82" class="step-db"/>
+    <text x="1478" y="1490" class="box-title">19. Tạo transaction</text>
+    <text x="1478" y="1512" class="box-text">Lưu gross_commission,</text>
+    <text x="1478" y="1530" class="box-text">tenant_share, affiliate_keep</text>
+
+    <path d="M1585 1547 V1570" class="arrow"/>
+
+    <rect x="1460" y="1570" width="250" height="58" class="success"/>
+    <text x="1478" y="1595" class="box-title">20. Reporting sẵn sàng</text>
+    <text x="1478" y="1617" class="box-text">CMS/Tenant Portal xem theo quyền</text>
+
+    <!-- exception box -->
+    <rect x="360" y="1160" width="180" height="110" class="exception"/>
+    <text x="378" y="1185" class="box-title">Ghi exception</text>
+    <text x="378" y="1207" class="box-text">click_id_invalid,</text>
+    <text x="378" y="1225" class="box-text">visibility_fail,</text>
+    <text x="378" y="1243" class="box-text">mapping_missing,</text>
+    <text x="378" y="1261" class="box-text">commission_rule_missing</text>
+
+  </g>
+</svg>

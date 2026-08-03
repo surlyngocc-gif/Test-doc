@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="650" viewBox="0 0 1600 650">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#475467"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#98a2b3;stroke-width:1.4;rx:9}
+      .platform{fill:#eef4ff;stroke:#84adff;stroke-width:1.4;rx:9}
+      .decision{fill:#fffbeb;stroke:#f59e0b;stroke-width:1.5}
+      .success{fill:#ecfdf3;stroke:#12b76a;stroke-width:1.5;rx:9}
+      .exception{fill:#fff1f3;stroke:#f63d68;stroke-width:1.5;rx:9}
+      .title{font:700 19px Arial,sans-serif;fill:#101828}
+      .text{font:700 13px Arial,sans-serif;fill:#101828}
+      .small{font:12px Arial,sans-serif;fill:#475467}
+      .label{font:700 10px Arial,sans-serif;fill:#667085}
+      .arrow{stroke:#475467;stroke-width:1.6;fill:none;marker-end:url(#arrow)}
+      .dashed{stroke:#667085;stroke-width:1.4;fill:none;stroke-dasharray:6 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <rect width="1600" height="650" fill="#fff"/>
+  <text x="800" y="34" class="title" text-anchor="middle">COM-001/002 — Resolve và tính theo từng Order Item</text>
+
+  <rect x="30" y="92" width="190" height="92" class="platform"/>
+  <text x="48" y="120" class="text">1. Nhận từng item</text>
+  <text x="48" y="145" class="small">Final amount</text>
+  <text x="48" y="166" class="small">offer_code, category_code</text>
+
+  <path d="M220 138 H270" class="arrow"/>
+  <polygon points="365,82 460,138 365,194 270,138" class="decision"/>
+  <text x="365" y="133" class="text" text-anchor="middle">2. Có offer_code?</text>
+  <text x="365" y="155" class="small" text-anchor="middle">Theo item thực tế</text>
+
+  <path d="M460 138 H510" class="arrow"/>
+  <text x="472" y="127" class="label">CÓ</text>
+  <rect x="510" y="92" width="220" height="92" class="box"/>
+  <text x="528" y="120" class="text">3A. Resolve Offer</text>
+  <text x="528" y="145" class="small">Mapping + commission rule</text>
+  <text x="528" y="166" class="small">Source = Offer</text>
+
+  <path d="M365 194 V270" class="arrow"/>
+  <text x="380" y="220" class="label">KHÔNG</text>
+  <polygon points="365,270 460,326 365,382 270,326" class="decision"/>
+  <text x="365" y="321" class="text" text-anchor="middle">3B. Category map?</text>
+  <text x="365" y="343" class="small" text-anchor="middle">Theo category_code</text>
+
+  <path d="M460 326 H510" class="arrow"/>
+  <text x="472" y="315" class="label">CÓ</text>
+  <rect x="510" y="280" width="220" height="92" class="box"/>
+  <text x="528" y="308" class="text">4A. Resolve Category</text>
+  <text x="528" y="333" class="small">Category commission rule</text>
+  <text x="528" y="354" class="small">Source = Category</text>
+
+  <path d="M365 382 V460 H510" class="arrow"/>
+  <text x="380" y="410" class="label">KHÔNG</text>
+  <rect x="510" y="420" width="220" height="92" class="box"/>
+  <text x="528" y="448" class="text">4B. Category Default</text>
+  <text x="528" y="473" class="small">Default rule của Brand</text>
+  <text x="528" y="494" class="small">Source = Category Default</text>
+
+  <path d="M680 184 V230 H840 V300 H860" class="arrow"/>
+  <path d="M730 326 H860" class="arrow"/>
+  <path d="M730 466 H810 V382 H860" class="arrow"/>
+  <rect x="860" y="270" width="230" height="112" class="platform"/>
+  <text x="878" y="300" class="text">5. Tính Gross commission</text>
+  <text x="878" y="326" class="small">Percentage hoặc Fixed</text>
+  <text x="878" y="349" class="small">Theo Final amount và rule</text>
+  <text x="878" y="370" class="small">Lưu source/value/reference</text>
+
+  <path d="M1090 326 H1140" class="arrow"/>
+  <rect x="1140" y="270" width="230" height="112" class="platform"/>
+  <text x="1158" y="300" class="text">6. Resolve Tenant Share</text>
+  <text x="1158" y="326" class="small">Offer → Category</text>
+  <text x="1158" y="349" class="small">→ Tenant default</text>
+  <text x="1158" y="370" class="small">Lưu source/value/reference</text>
+
+  <path d="M1370 326 H1420" class="arrow"/>
+  <rect x="1420" y="270" width="155" height="112" class="success"/>
+  <text x="1438" y="300" class="text">7. Hoàn tất item</text>
+  <text x="1438" y="326" class="small">Gross commission</text>
+  <text x="1438" y="349" class="small">Tenant Share</text>
+  <text x="1438" y="370" class="small">Chuyển ORD-006</text>
+
+  <rect x="880" y="520" width="300" height="82" class="exception"/>
+  <text x="1030" y="567" class="text" text-anchor="middle">Ghi nhận Exception</text>
+
+  <path d="M620 512 V561 H880" class="dashed"/>
+  <path d="M1255 382 V460 H1030 V520" class="dashed"/>
+</svg>
